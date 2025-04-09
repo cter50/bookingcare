@@ -1,5 +1,6 @@
 import { json } from 'body-parser';
 import db from '../models/index';
+// @ts-ignore
 import CRUDService from '../services/CRUDService';
 
 
@@ -23,9 +24,18 @@ let postCRUD = async (req, res) => {
     console.log(message);
     return res.send('post crud from server');
 }
-
+let displayGetCRUD = async (req, res) => {
+    let data = await CRUDService.getAllUsers();
+    console.log('--------------')
+    console.log(data);
+    console.log('--------------')
+    return res.render('displayCRUD.ejs', {
+        dataTable: data,
+    })
+}
 module.exports = {
     getHomePage: getHomePage,
     getCRUD: getCRUD,
     postCRUD: postCRUD,
+    displayGetCRUD: displayGetCRUD,
 }

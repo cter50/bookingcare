@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "trongle",
+    "database": "trongle1",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
