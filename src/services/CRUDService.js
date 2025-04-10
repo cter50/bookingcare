@@ -1,5 +1,7 @@
+// @ts-ignore
 import bcrypt from 'bcryptjs';
 import db from '../models';
+// @ts-ignore
 import { raw } from 'body-parser';
 
 
@@ -48,7 +50,53 @@ let getAllUsers = () => {
         }
     })
 }
+let getUserInfoById = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userId },
+                raw: true,
+            })
+            if (user) {
+                resolve(user);
+            } else {
+                resolve({});
+            }
+        } catch (e) {
+            reject(e);
+
+        }
+    })
+}
+let updateUserData = (data) => {
+    // @ts-ignore
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: data.id }
+            })
+            if (user) {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
+
+                await user.save();
+                let allUsers = await db.User.findAll();
+                // @ts-ignore
+                resolve(allUsers);
+            } else {
+                // @ts-ignore
+                resolve();
+            }
+        } catch (e) {
+            console.log(e);
+
+        }
+    })
+}
 module.exports = {
     createNewUser: createNewUser,
     getAllUsers: getAllUsers,
+    getUserInfoById: getUserInfoById,
+    updateUserData: updateUserData,
 } 
