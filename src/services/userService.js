@@ -1,7 +1,5 @@
-import { hash } from 'bcrypt';
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
-import { raw } from 'body-parser';
 
 let handleUserLogin = async (email, password) => {
     return new Promise(async (resolve, reject) => {
@@ -16,8 +14,7 @@ let handleUserLogin = async (email, password) => {
                 })
                 if (user) {
                     //compare password
-                    // let check = await bcrypt.compareSync(password, user.password); // true
-                    let check = true;
+                    let check = await bcrypt.compareSync(password, user.password); // true
                     if (check) {
                         userData.errCode = 0;
                         userData.errMessage = 'ok';
@@ -46,7 +43,6 @@ let checkUserEmail = (userEmail) => {
         try {
             let user = await db.User.findOne({
                 where: { email: userEmail },
-                raw: true
             })
             if (user) {
                 resolve(true);
@@ -58,7 +54,28 @@ let checkUserEmail = (userEmail) => {
         }
     })
 }
+let getAllUsers = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let users = '';
+            if (userId === 'ALL') {
+                let users = await db.User.findAll({
+                    attributes: { exclude: ['password'] },
+                })
+            }
+            if (userId && userId !== 'ALL') {
+                users = await db.User.findOne({
+                    where: { id: userId },
+                    attributes: { exclude: ['password'] },
+                })
+            }
+            resolve(users);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 module.exports = {
-    checkUserEmail: checkUserEmail,
     handleUserLogin: handleUserLogin,
+    getAllUsers: getAllUsers,
 }
